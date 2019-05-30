@@ -1,0 +1,492 @@
+<template>
+  <div class="dwlrdzsq">
+    <toolBar :get-current-row="currentRow" :client-butns-array="clientButnsArray" />
+    <h1>非税收入减免管理</h1>
+    <el-form ref="form" :model="form" size="mini" label-width="80px">
+      <el-row>
+        <el-col :span="2">
+          <el-form-item label-width="20px" label="">
+            <el-checkbox-group v-model="form.isdate" @change="isdateChange">
+              <el-checkbox label="填制日期" name="type"/>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="3">
+          <el-form-item label="" label-width="0px">
+            <el-date-picker
+              :disabled="!form.isdate"
+              v-model="form.startdate"
+              value-format="yyyy-MM-dd"
+              type="date"
+              placeholder="选择日期"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="1">
+          <el-form-item label="至" label-width="40px"/>
+        </el-col>
+        <el-col :span="3">
+          <el-form-item label="" label-width="0px">
+            <el-date-picker
+              :disabled="!form.isdate"
+              v-model="form.enddate"
+              value-format="yyyy-MM-dd"
+              type="date"
+              placeholder="选择日期"/>
+          </el-form-item>
+        </el-col>
+        <!-- </el-row>
+      <el-row> -->
+        <el-col :span="2">
+          <el-form-item label-width="20px" label="">
+            <label class="el-form-item__label" style="width: 60px;">刷新条件</label>
+          </el-form-item>
+        </el-col>
+        <el-col :span="3">
+          <el-form-item label="" label-width="0px">
+            <el-select v-model="form.selFilter" placeholder="">
+              <el-option label="申请单位编码" value="agencycode"/>
+              <el-option label="申请单位名称" value="agencyname"/>
+              <el-option label="填制人" value="writer"/>
+              <el-option label="提交人" value="reporter"/>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="1">
+          <el-form-item label="等于" label-width="40px"/>
+        </el-col>
+        <el-col :span="3">
+          <el-form-item label="" label-width="0px">
+            <el-input v-model="form.selValue" clearable/>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label-width="10px" label="">
+            <el-radio-group v-model="form.state">
+              <el-radio :label="1">全部</el-radio>
+              <el-radio :label="2">已审核</el-radio>
+              <el-radio :label="3">未审核</el-radio>
+              <el-radio :label="4">已送审</el-radio>
+              <el-radio :label="5">未送审</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-pagination
+          :current-page="form.pageIndex"
+          :page-sizes="[10, 15, 20, 25, 30]"
+          :page-size="form.pageSize"
+          :total="form.totalCount"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"/>
+      </el-row>
+    </el-form>
+    <!-- 表1 -->
+    <div class="wrap-box wrap">
+      <el-scrollbar style="height:100%;width:100%;">
+        <el-table
+          ref="singleTable"
+          :data="tableData"
+          border
+          style="width: 100%"
+          highlight-current-row
+          @row-dblclick = "dbRow"
+          @current-change="handleCurrentChangedetails">
+          <el-table-column
+            type="index"/>
+          <el-table-column
+            v-for="(item) in tablehd"
+            :key="item.prop"
+            :width="item.width"
+            :prop="item.prop"
+            :label="item.label"
+            sortable
+            header-align="center"
+            align="center"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if="item.prop === 'reported'|| item.prop === 'audited'">
+                {{ scope.row[item.prop] | markFilter }}
+              </span>
+              <!-- <span v-else-if="item.prop === 'audited'">
+                {{ scope.row[item.prop] | markFilter }}
+              </span> -->
+              <span v-else>
+                {{ scope.row[item.prop] }}
+              </span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-scrollbar>
+    </div>
+    <!-- 表2 -->
+    <div class="wrap">
+      <el-scrollbar style="height:100%;width:100%;">
+        <el-table
+          :data="currentRow ? currentRow.details :[]"
+          border
+          style="width: 100%">
+          <el-table-column
+            type="index"/>
+          <el-table-column
+            prop="nontaxcode"
+            show-overflow-tooltip
+            sortable
+            width="160"
+            align="center"
+            label="收费项目编码"/>
+          <el-table-column
+            prop="nontaxname"
+            show-overflow-tooltip
+            sortable
+            width="160"
+            align="center"
+            label="收费项目名称"/>
+          <el-table-column
+            prop="chargeunit"
+            show-overflow-tooltip
+            sortable
+            width="100"
+            align="center"
+            label="计量单位"/>
+          <el-table-column
+            prop="num"
+            show-overflow-tooltip
+            sortable
+            width="110"
+            align="center"
+            label="收费数量"/>
+          <el-table-column
+            prop="amt"
+            show-overflow-tooltip
+            sortable
+            width="110"
+            align="center"
+            label="应收金额"/>
+          <el-table-column
+            prop="deramt"
+            show-overflow-tooltip
+            sortable
+            width="110"
+            align="center"
+            label="减免金额"/>
+          <el-table-column
+            prop="actamt"
+            show-overflow-tooltip
+            sortable
+            width="110"
+            align="center"
+            label="实收金额"/>
+          <el-table-column
+            prop="remart"
+            show-overflow-tooltip
+            sortable
+            width="110"
+            align="center"
+            label="备注"/>
+        </el-table>
+      </el-scrollbar>
+    </div>
+    <!-- 添加对话框 -->
+    <add ref="layer1"/>
+  </div>
+</template>
+
+<script>
+import toolBar from '@/components/toolBar'
+import fssrjmgl from '@/api/czzsgl/fssrjmgl/fssrjmgl.js'
+import Bus from '@/utils/Bus'
+import add from './add'
+export default {
+  components: {
+    toolBar, // 上方工具条栏
+    add
+  },
+  data() {
+    return {
+      // 工具条按钮组
+      clientButnsArray: ['close', 'czbillAdd', 'czbillUpdate', 'czbillDelete', 'czbillRefresh',
+        'czbillSendAudit', 'tablePrintPreview', 'print', 'export', 'tablePrintSet'],
+      // 当前表单数据
+      form: {
+        // 页码
+        pageIndex: 1,
+        // 页条数
+        pageSize: 10,
+        // 审核状态
+        state: 1,
+        // 开始时间
+        startdate: '',
+        // 结束时间
+        enddate: '',
+        // 筛选条件k
+        selFilter: '',
+        // 筛选条件v
+        selValue: '',
+        // 总条数数
+        totalCount: 0,
+        // 是否开启日期
+        isdate: false
+      },
+      // 表一选择行标数据
+      currentRow: {},
+      // 表1数据
+      tableData: [],
+      // 提取的表头数据
+      tablehd: [
+        {
+          width: '160',
+          prop: 'agencycode',
+          label: '申请单位编号'
+        },
+        {
+          width: '160',
+          prop: 'agencyname',
+          label: '申请单位名称'
+        },
+        {
+          width: '120',
+          prop: 'writedate',
+          label: '填制日期'
+        },
+        {
+          width: '80',
+          prop: 'writer',
+          label: '填制人'
+        },
+        {
+          width: '80',
+          prop: 'dertype',
+          label: '减免类型'
+        },
+        {
+          width: '100',
+          prop: 'reported',
+          label: '送审标志'
+        },
+        {
+          width: '80',
+          prop: 'reporter',
+          label: '送审人'
+        },
+        {
+          width: '120',
+          prop: 'reportdate',
+          label: '送审日期'
+        },
+        {
+          width: '120',
+          prop: 'audited',
+          label: '审核标志'
+        },
+        {
+          width: '100',
+          prop: 'auditor',
+          label: '审核人'
+        },
+        {
+          width: '120',
+          prop: 'auditdate',
+          label: '审核日期'
+        }
+      ]
+    }
+  },
+  created() {
+    // 获取当前表格数据
+    this.pageIndex = 1
+    this.onSubmit()
+    // 添加
+    Bus.$off('add')
+    Bus.$on('add', () => {
+      this.add()
+    })
+    // 修改
+    Bus.$off('billUpdate')
+    Bus.$on('billUpdate', () => {
+      this.billUpdate()
+    })
+    // 删除
+    Bus.$off('billDelete')
+    Bus.$on('billDelete', () => {
+      this.billDelete()
+    })
+    // 刷新
+    Bus.$off('onSubmit')
+    Bus.$on('onSubmit', () => {
+      this.form.pageIndex = 1
+      this.onSubmit()
+    })
+    // 送审
+    Bus.$off('billSendAudit')
+    Bus.$on('billSendAudit', () => {
+      this.billSendAudit()
+    })
+  },
+  methods: {
+    // 双击表格行
+    dbRow(row) {
+      console.log('row', row)
+      fssrjmgl.get(row.guid).then(res => {
+        console.log(res)
+        console.log(JSON.stringify(res.data))
+        // 显示add组件
+        this.$refs.layer1.dialogTableVisible = true
+        // 数据
+        this.$refs.layer1.currentRow = res.data
+        // 编辑状态
+        this.$refs.layer1.state = false
+      })
+    },
+    // 单击表格行
+    handleCurrentChangedetails(currentRow) {
+      // 记录选择行数据
+      this.currentRow = currentRow
+    },
+    // 当前表格 页码改变 翻页
+    handleCurrentChange(val) {
+      this.form.pageIndex = val
+      this.onSubmit(this.form)
+    },
+    // 当前表格 页条数改变
+    handleSizeChange(val) {
+      this.form.pageSize = val
+      this.onSubmit(this.form)
+    },
+    // 日期框改变
+    isdateChange(val) {
+      if (val) {
+        var time = new Date()
+        this.form.startdate = `${time.getFullYear()}-${time.getMonth() + 1}-1`
+        // 设置当前时间
+        this.form.enddate = `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+      } else {
+        this.form.startdate = ''
+        this.form.enddate = ''
+      }
+    },
+    // 添加
+    add() {
+      var time = new Date()
+      // 显示add组件
+      this.$refs.layer1.dialogTableVisible = true
+      // 清空设置数据
+      this.$refs.layer1.currentRow = {
+        writedate: `${time.getFullYear()}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : ('0' + (time.getMonth() + 1))}-${time.getDate()} 00:00:00`,
+        coltrade: {
+          paybillno: ''
+        },
+        details: [],
+        dertype: '减征'
+      }
+      // 设置编辑状态
+      this.$refs.layer1.state = true
+    },
+    // 修改
+    billUpdate() {
+      // get数据
+      fssrjmgl.get(this.currentRow.guid).then(res => {
+        console.log(res)
+        console.log(JSON.stringify(res.data))
+        // 显示add组件
+        this.$refs.layer1.dialogTableVisible = true
+        // 设置数据
+        this.$refs.layer1.currentRow = res.data
+        // 设置编辑状态
+        this.$refs.layer1.state = true
+      })
+    },
+    // 删除
+    billDelete() {
+      this.$confirm('您确定要删除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 删除
+        fssrjmgl.remove(this.currentRow.guid).then(res => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          // 在add组件内时
+          // 隐藏add组件
+          this.$refs.layer1.dialogTableVisible = false
+          // 更新数据
+          this.form.pageIndex = 1
+          this.onSubmit()
+        })
+      }).catch(() => { console.log('取消了') })
+    },
+    // 查找
+    onSubmit() {
+      // list数据
+      fssrjmgl.list(this.form).then(res => {
+        this.tableData = res.data.data
+        // 设置总条数
+        this.form.totalCount = res.data.pageInfo.totalCount
+        // 设置表中数据
+        this.$refs.singleTable.setCurrentRow(this.tableData[0])
+        console.log(JSON.stringify(res.data.data))
+      })
+    },
+    // 送审
+    billSendAudit() {
+      this.$confirm('您确定要送审吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        fssrjmgl.sendReported(this.currentRow.guid).then(res => {
+          // 在add组件内时
+          fssrjmgl.get(this.currentRow.guid).then(res => {
+            console.log(res)
+            console.log(JSON.stringify(res.data))
+            // this.$refs.layer1.dialogTableVisible = true
+            // 设置数据
+            this.$refs.layer1.currentRow = res.data
+            // 编辑状态
+            this.$refs.layer1.state = false
+          })
+          this.$message({
+            type: 'success',
+            message: '送审成功!'
+          })
+          // 更新数据
+          this.form.pageIndex = 1
+          this.onSubmit()
+        })
+      }).catch(() => { console.log('取消了') })
+    }
+  }
+}
+</script>
+
+<style rel='stylesheet/scss' lang='scss' scoped>
+.dwlrdzsq{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  h1{
+    height: 40px;
+    line-height: 40px;
+    text-decoration: underline;
+    font-size: 20px;
+    text-align: center;
+    font-weight: 700;
+    // margin-bottom: 20px;
+
+  }
+  .wrap{
+    height: 200px;
+  }
+  .wrap-box{
+    flex: 1;
+    padding: 5px;
+    height: 200px;
+}
+}
+</style>

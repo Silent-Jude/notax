@@ -1,0 +1,164 @@
+//to reset element-ui default css
+.el-upload {
+  input[type="file"] {
+    display: none !important;
+  }
+}
+
+.el-upload__input {
+  display: none;
+}
+
+//暂时性解决diolag 问题 https://github.com/ElemeFE/element/issues/2461
+.el-dialog {
+  transform: none;
+  left: 0;
+  position: relative;
+  margin: 0 auto;
+  height: 80%;
+}
+
+//element ui upload
+.upload-container {
+  .el-upload {
+    width: 100%;
+
+    .el-upload-dragger {
+      width: 100%;
+      height: 200px;
+    }
+  }
+}
+
+.el-table,
+.el-table thead {
+  color: #000
+}
+
+.el-table th {
+  background: -webkit-linear-gradient(#F1F6F9, #D0D7E5);
+  background: -o-linear-gradient(#F1F6F9, #D0D7E5);
+  background: -moz-linear-gradient(#F1F6F9, #D0D7E5);
+  background: linear-gradient(#F1F6F9, #D0D7E5)
+}
+
+.el-table tr {
+  // border:1px solid #D0D7E5
+}
+
+.el-table th,
+.el-table td {
+  border-bottom: 1px solid #D0D7E5;
+  border-left-color: #D0D7E5;
+  border-right-color: #D0D7E5;
+
+
+}
+// el-table 选中行颜色高亮。
+.el-table__body tr.current-row>td {
+  background-color: #A3BFE2;
+}
+
+.el-table--enable-row-hover .el-table__body tr:hover>td {
+  background-color: rgb(183, 207, 236);
+}
+
+.el-dialog__header {
+  padding: 10px 10px 5px
+}
+
+.el-dialog__body {
+  padding: 10px 10px
+}
+
+// .v-modal {
+//   z-index: 3 !important
+// }
+
+.right-wrap .tab .el-tabs .el-tabs__content {
+  background: #DFE8F6
+}
+
+.el-tabs__item {
+  // background: -webkit-linear-gradient(#B0CAED, #fff);
+  // background: -o-linear-gradient(#B0CAED, #fff);
+  // background: -moz-linear-gradient(#B0CAED, #fff);
+  // background: linear-gradient(#B0CAED, #fff);
+  // border: 1px solid #99BBE8;
+  color: #666
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
+  background: -webkit-linear-gradient(#fff, #B0CAED);
+  background: -o-linear-gradient(#fff, #B0CAED);
+  background: -moz-linear-gradient(#fff, #B0CAED);
+  background: linear-gradient(#fff, #B0CAED);
+  color: #000
+}
+// 节点树高亮
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+  background-color:#A3BFE2
+}
+
+.el-form-item--mini.el-form-item{
+  // margin-bottom: 5px
+}
+.el-icon-caret-right:before{
+  // color:#000
+}
+.el-tree-node__expand-icon.expanded,.el-tree-node__content>.el-tree-node__expand-icon{
+  color:#000
+}
+.el-tree-node__expand-icon.is-leaf{
+  color: transparent;
+}
+.layer{
+  .wrap{
+    height: 300px;
+  }
+}
+
+.wrap-add,
+.table-wrap,
+.tabletop {
+  height: 200px;
+  .el-table {
+    overflow: visible;
+  }
+  .el-table__body-wrapper {
+    overflow: visible !important;
+  }
+  .el-scrollbar__view {
+    // width: fit-content;
+  }
+}
+
+.wrap {
+  .el-table{
+    overflow:visible;
+    }
+  .el-table__body-wrapper{
+    overflow: visible!important;
+  }
+  .el-scrollbar__view{
+    width: fit-content;
+  }
+}
+.el-table__header-wrapper{
+  overflow:visible;
+}
+
+.el-transfer{
+  display: flex;
+  justify-content: space-around
+}
+.el-transfer__buttons{
+  align-self: center;
+}
+
+.el-table--border::after, .el-table--group::after, .el-table::before{
+  position:static
+}
+.el-select-dropdown {
+  z-index: 3002!important
+}

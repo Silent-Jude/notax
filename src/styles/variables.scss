@@ -1,0 +1,24 @@
+//sidebar
+$menuText:#7C818F;// 菜单默认文字
+$menuActiveText:#FEFEFE;// 菜单激活文字
+$subMenuActiveText:#FEFEFE; // 子菜单激活文字
+
+$menuBg:#2F333E; // 菜单默认背景色
+$menuHover:#232730; // 鼠标经过时菜单背景色。
+
+$subMenuBg:#232730; //子菜单背景色。
+$subMenuHover:#2F333E; //鼠标经过时子菜单背景色。
+
+$sideBarWidth: 220px;
+
+// the :export directive is the magic sauce for webpack
+:export {
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  subMenuActiveText: $subMenuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+  subMenuBg: $subMenuBg;
+  subMenuHover: $subMenuHover;
+  sideBarWidth: $sideBarWidth;
+}
